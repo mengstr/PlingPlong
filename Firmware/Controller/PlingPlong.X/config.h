@@ -12,8 +12,14 @@
 extern "C" {
 #endif
 
+#define  testbit(var, bit)   ((var) & (1UL <<(bit)))
+#define  setbit(var, bit)    ((var) |= (1UL << (bit)))
+#define  clrbit(var, bit)    ((var) &= ~(1UL << (bit)))
 
-#define _XTAL_FREQ 16000000
+    
+#define _XTAL_FREQ  16000000
+#define CHANNEL     0x0F        // Channel 16
+#define VELOCITY    127         // High velocity
 
 
 #ifdef	__cplusplus

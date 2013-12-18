@@ -46,21 +46,21 @@ void SetupCTMU(void) {
 
 
 uint16_t ReadPad(uint8_t no) {
-    uint16_t v;
+    uint32_t v;
     uint8_t i;
 
     v=0;
-    for (i=0; i<8; i++) {
+    for (i=0; i<TOUCHOVERSAMPLE; i++) {
         ADCON0bits.CHS=PADMAP[no];      // Select ADC channel
         CTMUCONHbits.CTMUEN = 1;        // Enable the CTMU
         CTMUCONLbits.EDG1STAT = 0;      // Set Edge status bits to zero
         CTMUCONLbits.EDG2STAT = 0;
         CTMUCONHbits.IDISSEN = 1;       //drain charge on the circuit
-        __delay_us(5);
+        __delay_us(DISCHARGETIME);
         CTMUCONHbits.IDISSEN = 0;       //end drain of circuit
         di();
         CTMUCONLbits.EDG1STAT = 1;      //Begin charging the circuit using CTMU current source
-        __delay_us(1);
+        __delay_us(CHARGETIME);
         CTMUCONLbits.EDG1STAT = 0;      //Stop charging circuit
         PIR1bits.ADIF = 0;              //make sure A/D Int not set
         ADCON0bits.GO=1;                //and begin A/D conv.
@@ -68,7 +68,7 @@ uint16_t ReadPad(uint8_t no) {
         ei();
         v+=ADRES;                        //Get the value from the A/D
     }
-    return v/8;
+    return v/TOUCHOVERSAMPLE;
 }
 
 
@@ -79,11 +79,11 @@ void CalibratePads(void) {
 
     for (i=0; i<PADS; i++) {
         avg=0;
-        for (j=0; j<8; j++) {
-            __delay_ms(10);
+        for (j=0; j<CALIBRATEOVERSAMPLE; j++) {
+            __delay_ms(1);
             avg+=ReadPad(i);
         }
-        avg=avg/8;
+        avg=avg/CALIBRATEOVERSAMPLE;
         padBase[i]=avg;
     }
 }

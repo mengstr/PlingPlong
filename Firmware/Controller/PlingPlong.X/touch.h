@@ -12,9 +12,13 @@
 extern "C" {
 #endif
 
-#define PADS    24
-
 #include <stdint.h>         // uint8_t definitions
+
+#define PADS            24
+#define TOUCHOVERSAMPLE 8
+#define CHARGETIME      2
+#define DISCHARGETIME   5
+#define CALIBRATEOVERSAMPLE 8
 
 void SetupCTMU(void);
 uint16_t ReadPad(uint8_t no);
